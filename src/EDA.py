@@ -1,18 +1,13 @@
 import os
-
 import pandas as pd
 import numpy as np
 import seaborn as sns
-
-import matplotlib
-matplotlib.use("Agg")
-
 import matplotlib.pyplot as plt
 
 
-# --------------------------------------------------
-# Project paths
-# --------------------------------------------------
+# ---------------------------------------------------------
+# 1. PROJECT DIRECTORY
+# ---------------------------------------------------------
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(
@@ -20,11 +15,21 @@ BASE_DIR = os.path.dirname(
     )
 )
 
+
+# ---------------------------------------------------------
+# 2. DATASET PATH
+# ---------------------------------------------------------
+
 DATA_PATH = os.path.join(
     BASE_DIR,
     "Data",
     "placement_predict_50k Dataset (2).csv"
 )
+
+
+# ---------------------------------------------------------
+# 3. OUTPUT PATH
+# ---------------------------------------------------------
 
 OUTPUT_PATH = os.path.join(
     BASE_DIR,
@@ -32,25 +37,27 @@ OUTPUT_PATH = os.path.join(
     "plot"
 )
 
-# Create output folder if it doesn't exist
 os.makedirs(OUTPUT_PATH, exist_ok=True)
 
 
-# --------------------------------------------------
-# Load dataset
-# --------------------------------------------------
+# ---------------------------------------------------------
+# 4. LOAD DATASET
+# ---------------------------------------------------------
 
 df = pd.read_csv(DATA_PATH)
 
+print("Dataset loaded successfully!")
+print("Dataset shape:", df.shape)
 
-# --------------------------------------------------
-# 1. CGPA Distribution
-# --------------------------------------------------
+
+# =========================================================
+# PLOT 1: CGPA DISTRIBUTION
+# =========================================================
 
 plt.figure(figsize=(8, 5))
 
 plt.hist(
-    df["CGPA"],
+    df["CGPA"].dropna(),
     bins=10,
     edgecolor="black"
 )
@@ -66,15 +73,17 @@ plt.savefig(
         OUTPUT_PATH,
         "cgpa_distribution.png"
     ),
-    dpi=150
+    dpi=150,
+    bbox_inches="tight"
 )
 
+plt.show()
 plt.close()
 
 
-# --------------------------------------------------
-# 2. Gender Distribution
-# --------------------------------------------------
+# =========================================================
+# PLOT 2: GENDER DISTRIBUTION
+# =========================================================
 
 plt.figure(figsize=(7, 5))
 
@@ -94,15 +103,17 @@ plt.savefig(
         OUTPUT_PATH,
         "gender_distribution.png"
     ),
-    dpi=150
+    dpi=150,
+    bbox_inches="tight"
 )
 
+plt.show()
 plt.close()
 
 
-# --------------------------------------------------
-# 3. CGPA vs Placement Status
-# --------------------------------------------------
+# =========================================================
+# PLOT 3: CGPA VS PLACEMENT STATUS
+# =========================================================
 
 plt.figure(figsize=(8, 5))
 
@@ -123,15 +134,17 @@ plt.savefig(
         OUTPUT_PATH,
         "cgpa_vs_placement.png"
     ),
-    dpi=150
+    dpi=150,
+    bbox_inches="tight"
 )
 
+plt.show()
 plt.close()
 
 
-# --------------------------------------------------
-# 4. CGPA vs Attendance
-# --------------------------------------------------
+# =========================================================
+# PLOT 4: CGPA VS ATTENDANCE
+# =========================================================
 
 plt.figure(figsize=(8, 5))
 
@@ -152,39 +165,48 @@ plt.savefig(
         OUTPUT_PATH,
         "cgpa_vs_attendance.png"
     ),
-    dpi=150
+    dpi=150,
+    bbox_inches="tight"
 )
 
+plt.show()
 plt.close()
 
 
-# --------------------------------------------------
-# 5. CGPA and Internships Pairplot
-# --------------------------------------------------
+# =========================================================
+# PLOT 5: CGPA AND INTERNSHIPS PAIRPLOT
+# =========================================================
 
 pair_data = df[
     ["CGPA", "Internships"]
 ].dropna()
 
-sns.pairplot(
+pair_plot = sns.pairplot(
     pair_data,
     diag_kind="hist"
 )
 
-plt.savefig(
+pair_plot.fig.suptitle(
+    "CGPA and Internships Relationship",
+    y=1.02
+)
+
+pair_plot.fig.savefig(
     os.path.join(
         OUTPUT_PATH,
         "cgpa_internships_pairplot.png"
     ),
-    dpi=150
+    dpi=150,
+    bbox_inches="tight"
 )
 
+plt.show()
 plt.close("all")
 
 
-# --------------------------------------------------
-# 6. Correlation Heatmap
-# --------------------------------------------------
+# =========================================================
+# PLOT 6: CORRELATION HEATMAP
+# =========================================================
 
 numeric_df = df.select_dtypes(
     include=["number"]
@@ -211,23 +233,58 @@ plt.savefig(
         OUTPUT_PATH,
         "correlation_heatmap.png"
     ),
-    dpi=150
+    dpi=150,
+    bbox_inches="tight"
 )
 
+plt.show()
 plt.close()
 
 
-# --------------------------------------------------
-# EDA information
-# --------------------------------------------------
+# =========================================================
+# DATASET INFORMATION
+# =========================================================
 
-print("EDA completed successfully.")
+print("\nFirst 5 rows:")
+print(df.head())
+
+print("\nLast 5 rows:")
+print(df.tail())
+
+print("\nDataset shape:")
+print(df.shape)
+
+print("\nColumns:")
+print(df.columns)
+
+print("\nData types:")
+print(df.dtypes)
+
+print("\nDescriptive statistics:")
+print(df.describe())
+
+print("\nMissing values:")
+print(df.isnull().sum())
+
+print("\nDuplicate rows:")
+print(df.duplicated().sum())
+
+print("\nCGPA skewness:")
+print(df["CGPA"].skew())
+
+print("\nCGPA kurtosis:")
+print(df["CGPA"].kurt())
+
+
+# =========================================================
+# COMPLETION MESSAGE
+# =========================================================
+
+print("\n========================================")
+print("EDA COMPLETED SUCCESSFULLY")
+print("========================================")
 
 print("Dataset shape:", df.shape)
 
-print("CGPA skewness:", df["CGPA"].skew())
-
-print("CGPA kurtosis:", df["CGPA"].kurt())
-
-print("Plots saved in:")
+print("\nPlots saved in:")
 print(OUTPUT_PATH)
